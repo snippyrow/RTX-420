@@ -30,8 +30,9 @@ Maybe do some of this in software.. if it does not have performance cuts
   cannot be changed.
 
   The status register is conposed of the following:
-  0bxxxCMMBF
+  0bxxRCMMBF
   x -> don't care
+  R -> Read packet. Indicated that the CPU has processed the first packet and is ready for the next packet. Not necessary, but the B flag is useful for signaling the end.
   C -> Cooling mode. Turn on fan (not implemented)
   MM -> operating mode. Refer to the featureset! (W)
   B -> Busy flag. The busy flag is set when the CPU section is currently performing an action, such as drawing a sprite to the screen. (R)
@@ -85,3 +86,11 @@ Maybe do some of this in software.. if it does not have performance cuts
 # For text modes:
   Text mode functions the same as graphical 640x480 @ 60hz, but dedicated to printing text rather than pixels. The process is the same as 1/2 buffer modes, however.
 
+# Sending packets to the GPU
+  When sending requests and commands through the CPU, the 19-bit address and the data bus are latched Asynchronously. Additionally, the latch pin (W) triggers an interrupt. The interruopt will then
+  tell the CPU to cache the instruction in it's internal memory. The low part of the address is located at $0x2001, the high part of the address is located at $0x2002, and the extra part is located at $0x2003.
+  Data bus is located at $0x2004. The reason why sprites will have so much support is that for each pixel, the CPU needs to read this command and process it. To save time, the CPU only needs to read
+  the highest three bits to tell whether it is a special command or not. A special command may include the drawing of sprites, text, altering the status register, etc. In the case of a pixel write, where
+  the address and data busses can be passed on directly, it does so. On the upper three bits of PA, designed for the status register live outputs, it can provide a special signal. Instead of asking that
+  the latches receive the locations and data in the form of the latch labels, it can instead choose to pass on the contents of the pin latches to the internal latched data directly, in one cycle.
+  This will hugely save time. Otherwise, if the processor needs to do an operation, it will latch the addresses and all.
