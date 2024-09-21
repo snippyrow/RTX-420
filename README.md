@@ -19,7 +19,7 @@ The card has the following features:
 This section is a reference for my own design
 Maybe do some of this in software.. if it does not have performance cuts
 
-General:
+# General:
   Before the buffering mode or display mode can be set, a frame must first be completed. This is signaled by the 'RE' label transitioning from low to high.
   This is caused by the throughput register ending. When this happens, all the status registers are reset, and any flags/modes are updated.
 
@@ -48,7 +48,7 @@ General:
   If you attempt to send more commands at once than the GPU can handle by not using the BUSY flag, it will slow down. Instructions will be queued as if a stack, but stacking
   instructions takes resources!
 
-For single-buffer graphics' modes:
+# For single-buffer graphics' modes:
   In order for the CPU section to write a pixel to video memory, it does as follows:
   First, whether it is in double mode or not, it latches the address and data busses. This is done by writing the data to $0x2000.
   The next memory write cycle will set the pixel. Write any value to $0x2000, but the lowest three bits will become the upper three bits of the 19-bit pixel address.
@@ -71,13 +71,13 @@ For single-buffer graphics' modes:
   The queue bit is also reset after the subsequent write, and the state register is fully reset immediatly after. After all this, the CPU may send another write request to the VGA section,
   or the VGA section may initiate more pixel displays. If no queue bit is set at the start of each pixel, then no action is taken and it is trained on that address.
 
-For double-buffer graphics' modes:
+# For double-buffer graphics' modes:
   For sending a write request, the process is a little more simple than using a single buffer. Data is latched the same as using a single buffer, except for the upper three bits of the address.
   When sending the write request, all we need to do is write anything to the address $0x2000. The low three bits become the upper three of the address, and the data is immediatly written into
   the video memory like using a normal memory chip. The pixels we are writing go into the back buffer, while the front buffer is currently being displayed. We do not need to touch the front buffer
   as it is being displayed. We can do all the work we want on the bottom without anything showing up. Finally, when we are done with the frame, we can send the command to switch the buffer,
   and the other buffer comes avalible. The VGA section automatically does this for us, so we can simply resume as normal.
 
-For text modes:
+# For text modes:
   Text mode functions the same as graphical 640x480 @ 60hz, but dedicated to printing text rather than pixels. The process is the same as 1/2 buffer modes, however.
 
