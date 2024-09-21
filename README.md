@@ -48,6 +48,10 @@ Maybe do some of this in software.. if it does not have performance cuts
   If you attempt to send more commands at once than the GPU can handle by not using the BUSY flag, it will slow down. Instructions will be queued as if a stack, but stacking
   instructions takes resources!
 
+  When updating the status register, you must send a command through the address BUS. The data bus will contain everything about the command you just sent. When changing the status register,
+  the hardware will only update the changes on the start of the next frame. The command register is put through PA. The busy flag is the only exception, going outside the GPU
+  towards the driver. It is updated asynchronously.
+
 # For single-buffer graphics' modes:
   In order for the CPU section to write a pixel to video memory, it does as follows:
   First, whether it is in double mode or not, it latches the address and data busses. This is done by writing the data to $0x2000.
