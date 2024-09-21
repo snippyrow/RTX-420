@@ -53,6 +53,11 @@ Maybe do some of this in software.. if it does not have performance cuts
   the hardware will only update the changes on the start of the next frame. The command register is put through PA. The busy flag is the only exception, going outside the GPU
   towards the driver. It is updated asynchronously.
 
+  V2:
+  When the CPU wants to initiate a pixel write request *from the processor*, it will do so using two write cycles. First, the CPU writes the required data to address $0x2000. The lower
+  three address bits are the highest three bits on the 19-bit address, and the data is latched. On the second cycle, any instruction that writes to the data bus is latched as the other 16-bit
+  part of the pixel address, and the queue bit is set for write.
+
 # For single-buffer graphics' modes:
   In order for the CPU section to write a pixel to video memory, it does as follows:
   First, whether it is in double mode or not, it latches the address and data busses. This is done by writing the data to $0x2000.
