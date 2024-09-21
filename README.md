@@ -29,6 +29,25 @@ General:
   in 70x25 for characters. Each character is 9x16 pixels wide and tall. Text mode can also work with the double bit, allowing more compatibility. The resolution
   cannot be changed.
 
+  The status register is conposed of the following:
+  0bxxxCMMBF
+  x -> don't care
+  C -> Cooling mode. Turn on fan (not implemented)
+  MM -> operating mode. Refer to the featureset! (W)
+  B -> Busy flag. The busy flag is set when the CPU section is currently performing an action, such as drawing a sprite to the screen. (R)
+  F -> Frame set. Set to a 0 for a single buffer and 1 for double mode. (W)
+
+  Writing pixels to the GPU is easy, through the 19-bit address bus and the 8-bit data bus. In text mode, the address bus is not normally used. Text is simply
+  appended to the end of the text buffer, and changing the cursor position is relativly straightforward using bytes higher than 128.
+  In graphical mode, pixels are written by simply inserting the required address into the address bus and writing the pixel color into the data bus (32-palette)
+
+  For drawing a sprite, such as a square, rectangle or other shape, we need to send a command. In order to send a command, you must write to addresses $0xC0000 and above.
+  Certain commands will be palced at different locations along the address space, and they will be described later.
+  In order to set which buffer is selected, you must also send a command. Usually a good way to toggle which buffer is selected is by sending 0x0/0x1 to vector $0xC0000
+
+  If you attempt to send more commands at once than the GPU can handle by not using the BUSY flag, it will slow down. Instructions will be queued as if a stack, but stacking
+  instructions takes resources!
+
 For single-buffer graphics' modes:
   In order for the CPU section to write a pixel to video memory, it does as follows:
   First, whether it is in double mode or not, it latches the address and data busses. This is done by writing the data to $0x2000.
@@ -51,3 +70,14 @@ For single-buffer graphics' modes:
 
   The queue bit is also reset after the subsequent write, and the state register is fully reset immediatly after. After all this, the CPU may send another write request to the VGA section,
   or the VGA section may initiate more pixel displays. If no queue bit is set at the start of each pixel, then no action is taken and it is trained on that address.
+
+For double-buffer graphics' modes:
+  For sending a write request, the process is a little more simple than using a single buffer. Data is latched the same as using a single buffer, except for the upper three bits of the address.
+  When sending the write request, all we need to do is write anything to the address $0x2000. The low three bits become the upper three of the address, and the data is immediatly written into
+  the video memory like using a normal memory chip. The pixels we are writing go into the back buffer, while the front buffer is currently being displayed. We do not need to touch the front buffer
+  as it is being displayed. We can do all the work we want on the bottom without anything showing up. Finally, when we are done with the frame, we can send the command to switch the buffer,
+  and the other buffer comes avalible. The VGA section automatically does this for us, so we can simply resume as normal.
+
+For text modes:
+  Text mode functions the same as graphical 640x480 @ 60hz, but dedicated to printing text rather than pixels. The process is the same as 1/2 buffer modes, however.
+
