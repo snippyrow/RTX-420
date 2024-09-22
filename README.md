@@ -58,6 +58,16 @@ Maybe do some of this in software.. if it does not have performance cuts
   three address bits are the highest three bits on the 19-bit address, and the data is latched. On the second cycle, any instruction that writes to the data bus is latched as the other 16-bit
   part of the pixel address, and the queue bit is set for write.
 
+  Total I/O pins for the GPU are as follows:
+  Pins 0-18, for the address line.
+  Pins 19-26, for the data line
+  Pin 27, for submitting the instruction
+  Pin 28, for processing the instruction. This instruction is the same as the "BSY" flag. No more commands should be sent if this is high.
+  Pin 29, for overclock. This causes the processor section to work at 20mhz instead of 10mhz. Could cause issues.
+  Pin 30, for +5V (vcc)
+  Pin 31, for gnd (vss)
+  
+
 # For single-buffer graphics' modes:
   In order for the CPU section to write a pixel to video memory, it does as follows:
   First, whether it is in double mode or not, it latches the address and data busses. This is done by writing the data to $0x2000.
