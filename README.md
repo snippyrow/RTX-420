@@ -60,11 +60,17 @@ Maybe do some of this in software.. if it does not have performance cuts
 
   Total I/O pins for the GPU are as follows:
   Pins 0-18, for the address line.
+  
   Pins 19-26, for the data line
+  
   Pin 27, for submitting the instruction
+  
   Pin 28, for processing the instruction. This instruction is the same as the "BSY" flag. No more commands should be sent if this is high.
+  
   Pin 29, for overclock. This causes the processor section to work at 20mhz instead of 10mhz. Could cause issues.
+  
   Pin 30, for +5V (vcc)
+  
   Pin 31, for gnd (vss)
   
 
