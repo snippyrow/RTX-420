@@ -61,3 +61,6 @@ this case the data is already there. Instead of pulling from the CPU-latch regis
 registers in the same clock cycle, and on the falling edge of the CPU clock, the CPU is reconnected with the data busses. On the CPU-side, a pass-write is triggered by writing to
 $0x2004. During the entire instruction the BUSY bit is set, and no more instructions are taken. It uses a read, compare and a write instruction.
 
+# CPU-Write
+Sometimes the CPU section must draw something not passed on directly by the driver. In that case the CPU must generate some valid pixel addresses and colors. Conserving CPU clock cycles
+is of utmost importance when writing individual pixels. Using a more advanced W65C816S, it has full access to a 24-bit data bus, saving time. 
