@@ -63,4 +63,11 @@ $0x2004. During the entire instruction the BUSY bit is set, and no more instruct
 
 # CPU-Write
 Sometimes the CPU section must draw something not passed on directly by the driver. In that case the CPU must generate some valid pixel addresses and colors. Conserving CPU clock cycles
-is of utmost importance when writing individual pixels. Using a more advanced W65C816S, it has full access to a 24-bit data bus, saving time. 
+is of utmost importance when writing individual pixels. Using a more advanced W65C816S, it has full access to a 24-bit data bus, saving time. In order to write to a pixel location, you
+must write to the standard *VGA address*, only the 24-th bit must be set. This signals to the hardware that you are writing or reading from the video hardware rather than the CPU memory.
+For example, to write to pixel address $0x3D090, you instead write to $0x43D090. This has the final bit set high. When sending the data, on the rising edge of the clock for writing the data,
+the address is latched into three 8-bit registers, for low, mid and high bits. The data bus is also latched. The QUEUE bit is also enabled, and it waits for the graphics' section to take the
+request. At the end of any writes the GPU takes, the QUEUE bit is reset, usually in the same moment that the video memory is written. If not, the hardware would write the pixel to every
+location.
+
+# Display hardware
