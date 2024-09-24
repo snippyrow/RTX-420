@@ -84,4 +84,7 @@ as well. In order to switch modes, you can send a command, and it is described l
 writing. The one that is being written to will not have its throughput updated, and output will be disabled. The writing circuit will be multiplexed to either buffer, as well as the throughput.
 In terms of hardware, little is changed.
 
+# Text Mode
+When using text mode, the GPU is automatically placed in 648x480 mode. The screen uses 70x25 for text
+characters, with each character rendering at 9x16 pixels. The font is built into the program ROM and normally cannot be changed. In order to send characters to the screen, you send the ascii code of the character through the external data bus.
 
