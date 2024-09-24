@@ -72,6 +72,8 @@ Maybe do some of this in software.. if it does not have performance cuts
   Pin 30, for +5V (vcc)
   
   Pin 31, for gnd (vss)
+
+  Optionally, instead of receiving and forming a write request one byte at a time, the 6522 can enable a "passthrough" bit, enabling the registers to pass towards the INT_A and V lines automatically
   
 
 # For single-buffer graphics' modes:
