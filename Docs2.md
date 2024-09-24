@@ -24,5 +24,18 @@ Here is the full features' list:
   	- An 8-bit data bus
   	- A 19-bit address bus, as well as for sending commands
   	- A pin to tell the driver about whether the GPU is busy
- 
-  
+  	- A write pin, to send a command
+  	- Hardware-accelerated pixel writes
+  	- Queue up multiple commands at once
+
+ # Technical
+
+ The most important pin on the board is called "BUSY". This pin is designed to tell the driver that the GPU is busy with a command. It is *very* important to wait
+ for this to end. During a pixel write, the CPU may use the latch registers more than once. During this, the CPU is shut off from the data pins. If you never notice,
+ the GPU could drop entire commands that way be vital to your system. In order to use multiple commands at once, queue them up using a special command. This is described
+ later. Keep in mind queud commands do not use a passthrough, so they may take longer.
+
+
+ When writing sprites or rendering a large scene in pixels, it is wise to enable overclocking. This command is also described. Overclocking allows the CPU to run at 20mhz
+ or higher, allowing for faster processing. If you want to display a flat image, or a text terminal, then overclocking may not be necessary. The GPU does not need to be refreashed
+ once per frame, as the display buffer is one single 1Mbit SRAM chip.
