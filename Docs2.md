@@ -70,4 +70,18 @@ the address is latched into three 8-bit registers, for low, mid and high bits. T
 request. At the end of any writes the GPU takes, the QUEUE bit is reset, usually in the same moment that the video memory is written. If not, the hardware would write the pixel to every
 location.
 
-# Display hardware
+# Display circuit
+The display circuitry runs off of seperate clock generators from the CPU, usually faster so it can run ahead of write requests. The resolution selector are two bits in PA, used to select between
+text mode or any of the three video resolutions. Every pixel the VGA displays, it also writes to a location. At the rising edge of the VGA clock, the throughput register is updated. This ensures
+no bugs while writing. At the falling edge of the CPU clock, an asynchronous circuit checks if the QUEUE bit is enabled. If it is enabled, it will briefly transfer address control away from the counters,
+into the latched address. The latched address can either be from the CPU or from the input latches, for pass-writes. These come from a D-latch circuit, and that latch then switches on a new latch. This new latch has been delayed slightly, and it signals that the video memory should be written to. In double-buffer mode, the selected chip is the one not currently being displayed. There are two throughput registers, one for each buffer.
+The displaying buffer will not be written, and the other will not be displayed. At the same moment it is written, it turns off both latches, and resets the QUEUE bit. When there is no queue bit, nothing else
+happens other than the throughput register updating.
+
+# Double buffering
+In automatic double buffering mode, the selected buffer is managed by the hardware. The DOUBLE bit will only change after the frame resets, from the currently selected buffer. This goes for the resolution modes
+as well. In order to switch modes, you can send a command, and it is described later. When selected, there will also be a single bit denoting which buffer is displaying, and the invert selects which is
+writing. The one that is being written to will not have its throughput updated, and output will be disabled. The writing circuit will be multiplexed to either buffer, as well as the throughput.
+In terms of hardware, little is changed.
+
+
