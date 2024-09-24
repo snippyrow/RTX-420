@@ -10,6 +10,19 @@ It is also used as an extension of a 6502 or a 65816-based computer, used for fa
 
 Here is the full features' list:
 - Rendering text to the screen:
-  - test
-    - test2
-      - tes3
+	- Full ASCII character set, 9x16
+   	- Auto scrolling to fit screen size
+   	- Changing the cursor position
+   	- Clearing the text UI
+   	- Choose one of 32 text colors
+- A range of graphical settings:
+  	- Support for 320x200 @ 70hz, 640x480 @ 60hz, and 800x600 @ 60hz
+  	- A color pallette of 32 (5-bit color)
+- As well as software:
+  	- Draw circles, rectangles, squares, lines, triangles, and more!
+  	- Enable double-buffering mode, handled on hardware
+  	- An 8-bit data bus
+  	- A 19-bit address bus, as well as for sending commands
+  	- A pin to tell the driver about whether the GPU is busy
+ 
+  
